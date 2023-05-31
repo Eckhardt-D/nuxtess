@@ -1,0 +1,23 @@
+version: "3.4"
+
+services:
+
+  mysql:
+    platform: linux/x86_64
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3313:3306
+    volumes:
+      - nuxtess-mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:5.0.2
+    restart: always
+    ports:
+      - 6380:6379
+
+volumes:
+  nuxtess-mysql-data:
