@@ -7,7 +7,9 @@ export default defineEventHandler(async (event) => {
   try {
     const {
       auth: { jwtTokenSecret, authCookieExpirySeconds },
-      public: { auth: { authCookieName } },
+      public: {
+        auth: { authCookieName },
+      },
     } = useRuntimeConfig();
 
     const body = await zh.useValidatedBody(event, {
@@ -41,7 +43,6 @@ export default defineEventHandler(async (event) => {
       error: null,
     };
   } catch (error) {
-    console.trace(error)
     return {
       data: null,
       error: (error as Error).message,

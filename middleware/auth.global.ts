@@ -1,10 +1,11 @@
 const ALLOWED_ROUTE_PREFIXES = ["/auth"];
+
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const isAllowed = ALLOWED_ROUTE_PREFIXES.some((route) => {
     return to.fullPath.match(new RegExp(`^${route}`));
   });
 
-  if (isAllowed) {
+  if (isAllowed || to.path === "/") {
     return;
   }
 
@@ -17,7 +18,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const twoFactorSettings = await getTwoFactorAuthSettings();
 
-  if (twoFactorSettings?.enabled) {
+  if (twoFactorSettings?.enabled && !twoFactorSettings.verified) {
     return navigateTo("/auth/2fa");
   }
 });

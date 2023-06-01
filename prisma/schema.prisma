@@ -18,11 +18,12 @@ model User {
 }
 
 model TwoFactorSettings {
-  id      String  @id @default(uuid())
-  enabled Boolean @default(false)
-  secret  String  @unique @db.VarChar(32)
-  uri     String
-  qr      String
-  userId  String  @unique
-  user    User    @relation(fields: [userId], references: [id])
+  id       String  @id @default(uuid())
+  enabled  Boolean @default(false)
+  verified Boolean @default(false)
+  secret   String  @unique @db.VarChar(32)
+  uri      String
+  qr       String
+  userId   String  @unique
+  user     User    @relation(fields: [userId], references: [id])
 }

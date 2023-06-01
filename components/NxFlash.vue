@@ -19,8 +19,11 @@ const borderColorMap = computed(() => {
 </script>
 
 <template>
-  <div v-if="flash.show" class="border rounded w-full p-4 shadow text-white"
-    :class="[backgroundColorMap[flash.variant], borderColorMap[flash.variant]]">
-    {{ flash.message }}
-  </div>
+  <Teleport to="body">
+    <div v-if="flash.show"
+      class="border rounded w-80 text-center p-4 shadow text-white fixed bottom-2 left-1/2 -translate-x-1/2"
+      :class="[backgroundColorMap[flash.variant], borderColorMap[flash.variant]]">
+      {{ flash.message }}
+    </div>
+  </Teleport>
 </template>

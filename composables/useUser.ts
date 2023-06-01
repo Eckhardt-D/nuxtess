@@ -12,6 +12,15 @@ type UserRegisterOptions = {
   passwordConfirm: string;
 };
 
+type UserUpdateOptions = {
+  name?: string;
+  email?: string;
+};
+
+type UserPasswordUpdateOptions = {
+  // todo
+};
+
 export default () => {
   const user = useState<Omit<User, "password"> | null>("user", () => null);
   const { show } = useFlash();
@@ -83,6 +92,27 @@ export default () => {
     return user.value;
   };
 
+  const update = async (options: UserUpdateOptions) => {
+    const { data, error } = await $fetch("/api/users", {
+      method: "PUT",
+      body: options,
+    });
+
+    if (!data || error) {
+      return show("Could not update your details, please try again", "error");
+    }
+
+    user.value = {
+      ...data,
+      createdAt: new Date(data.createdAt),
+      updatedAt: new Date(data.updatedAt),
+    };
+
+    show("Successfully updated your profile", "success");
+
+    return user.value;
+  };
+
   const getTwoFactorAuthSettings = async () => {
     return await $fetch("/api/2fa", {
       headers: {
@@ -135,6 +165,7 @@ export default () => {
     logout,
     register,
     refresh,
+    update,
     enableTwoFactorAuth,
     disableTwoFactorAuth,
     verifyTwoFactorCode,

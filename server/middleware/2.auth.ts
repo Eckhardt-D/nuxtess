@@ -1,10 +1,9 @@
 import * as jwt from "jsonwebtoken";
-import type {User} from "@prisma/client";
-
+import type { User } from "@prisma/client";
 
 declare module "h3" {
   interface H3EventContext {
-    user?: Omit<User, "password">
+    user?: Omit<User, "password">;
   }
 }
 
@@ -15,11 +14,12 @@ declare module "h3" {
 export default defineEventHandler(async (event) => {
   const {
     auth: { jwtTokenSecret },
-    public: { auth: { authCookieName } }
+    public: {
+      auth: { authCookieName },
+    },
   } = useRuntimeConfig();
 
-  const cookie = getCookie(event, authCookieName);
-  const token = cookie;
+  const token = getCookie(event, authCookieName);
 
   if (token === undefined) {
     return;
@@ -34,6 +34,7 @@ export default defineEventHandler(async (event) => {
     });
     event.context.user = exclude(user, ["password"]);
   } catch (_) {
+    // TODO: maybe do something atleast
     /* Do nothing, token likely expired */
   }
 });

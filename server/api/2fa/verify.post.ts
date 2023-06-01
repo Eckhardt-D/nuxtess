@@ -13,7 +13,16 @@ export default defineAuthedEventHandler(async (event) => {
       },
     });
 
-  if (verifyToken(userSettings.secret, body.otp)) {
+  if (verifyToken(userSettings.secret, body.otp) !== null) {
+    await event.context.db.twoFactorSettings.update({
+      where: {
+        userId: event.context.user!.id,
+      },
+      data: {
+        verified: true,
+      },
+    });
+
     return {
       data: true,
       error: null,

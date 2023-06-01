@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
     const body = await zh.useValidatedBody(event, {
       email: z.string().email(),
-      name: z.string().max(100),
+      name: z.string().max(100).min(1),
       password: z.string().min(8),
       passwordConfirm: z.string().min(8),
     });
@@ -58,7 +58,6 @@ export default defineEventHandler(async (event) => {
       error: null,
     };
   } catch (error) {
-    console.log(error);
     return {
       data: null,
       error: (error as Error).message,

@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-const { user } = useUser();
+const { user, update } = useUser();
+
+const profileUpdateForm = ref<HTMLFormElement | null>(null);
 
 definePageMeta({
   layout: "profile"
@@ -9,10 +11,19 @@ const details = reactive({
   name: user.value?.name ?? "",
   email: user.value?.email ?? "",
 });
+
+const updateUserProfile = async () => {
+  if (profileUpdateForm.value!.checkValidity()) {
+    await update({
+      email: details.email,
+      name: details.name,
+    })
+  }
+}
 </script>
 
 <template>
-  <form class=" w-96" @submit.prevent>
+  <form ref="profileUpdateForm" class=" w-96" @submit.prevent>
     <h2 class="text-2xl font-medium mb-3">Personal Details</h2>
     <p>Update your name or email. When updating your email address - you will have to re-verify it.</p>
     <section class="flex flex-col mt-5">
@@ -27,8 +38,8 @@ const details = reactive({
         placeholder="Email address" required>
     </section>
 
-    <nx-button class="mt-5">Update</nx-button>
+    <nx-button class="mt-5" @click="updateUserProfile">Update</nx-button>
 
-    <nx-flash />
+    <nx-flash class="mt-3" />
   </form>
 </template>
