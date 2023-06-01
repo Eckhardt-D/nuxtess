@@ -1,4 +1,12 @@
 import * as jwt from "jsonwebtoken";
+import type {User} from "@prisma/client";
+
+
+declare module "h3" {
+  interface H3EventContext {
+    user?: Omit<User, "password">
+  }
+}
 
 /**
  * Make the user globally available within event handlers
@@ -7,10 +15,11 @@ import * as jwt from "jsonwebtoken";
 export default defineEventHandler(async (event) => {
   const {
     auth: { jwtTokenSecret },
+    public: { auth: { authCookieName } }
   } = useRuntimeConfig();
 
-  const header = getHeader(event, "authorization");
-  const token = header?.split(" ")[1];
+  const cookie = getCookie(event, authCookieName);
+  const token = cookie;
 
   if (token === undefined) {
     return;

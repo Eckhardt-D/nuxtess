@@ -27,6 +27,7 @@ const login = async () => {
   <div class="max-w-md mx-auto">
     <form ref="loginForm" class="p-5 mt-5" @submit.prevent>
       <h1 class="text-3xl font-bold text-center mb-5">Login to your account</h1>
+      <p>Don't have an account? <nuxt-link class="text-blue-500" to="/auth/register">Register today</nuxt-link></p>
       <section class="flex flex-col mt-5">
         <label class="text-sm" for="email">Email address</label>
         <input v-model="credentials.email" class="p-2 rounded border border-slate-400" type="email" name="email"

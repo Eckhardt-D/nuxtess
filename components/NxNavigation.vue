@@ -1,3 +1,7 @@
+<script lang="ts" setup>
+const { user, logout } = useUser();
+</script>
+
 <template>
   <nav class="h-16 px-10 flex items-center justify-between">
     <div>
@@ -11,14 +15,17 @@
           </nuxt-link>
         </li>
         <li class="font-medium">
-          <nuxt-link to="/">
+          <nuxt-link to="/profile">
             Profile
           </nuxt-link>
         </li>
         <li class="font-medium">
-          <nuxt-link to="/">
+          <nuxt-link v-if="!user" to="/auth/login">
             Login
           </nuxt-link>
+          <a v-else href="#" @click="logout">
+            Logout
+          </a>
         </li>
       </ul>
     </div>

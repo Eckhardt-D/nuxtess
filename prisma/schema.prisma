@@ -8,10 +8,21 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String             @id @default(uuid())
+  email             String             @unique
+  name              String?
+  password          String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  twoFactorSettings TwoFactorSettings?
+}
+
+model TwoFactorSettings {
+  id      String  @id @default(uuid())
+  enabled Boolean @default(false)
+  secret  String  @unique @db.VarChar(32)
+  uri     String
+  qr      String
+  userId  String  @unique
+  user    User    @relation(fields: [userId], references: [id])
 }

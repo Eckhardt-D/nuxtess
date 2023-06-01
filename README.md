@@ -6,6 +6,19 @@ A starter for production Nuxt3 SaaS applications.
 
 The docker inclusion is just a nice to have and not a necessity. It's specifically to ease use of Redis and MySQL in local development. In a production environment you should use a production DATABASE_URL in your .env.
 
+```bash
+pnpm install
+```
+
+## Update app.config.ts with your app details
+
+```ts
+export default defineAppConfig({
+  // Used in e.g. 2FA app name
+  name: 'Your App Name'
+})
+```
+
 ## Update necessary items in .env
 
 ```
@@ -16,7 +29,7 @@ JWT_TOKEN_SECRET=
 
 ## Start the database servers
 
-```
+```bash
 docker compose up
 ```
 

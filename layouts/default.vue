@@ -2,7 +2,7 @@
   <main>
     <nx-navigation />
 
-    <section class="container mx-auto">
+    <section>
       <slot />
     </section>
   </main>

@@ -16,9 +16,9 @@ export default defineNuxtConfig({
       ),
     },
     public: {
-      auth: Object.freeze({
+      auth: {
         authCookieName: env.AUTH_COOKIE_NAME ?? "nuxtess_token",
-      }),
+      },
     },
   },
   nitro: {

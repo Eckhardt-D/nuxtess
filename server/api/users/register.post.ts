@@ -1,47 +1,67 @@
 import { z, zh } from "h3-zod";
 import { hash } from "argon2";
-import * as jwt from "jsonwebtoken";
+// @ts-expect-error
+import jwt from "jsonwebtoken";
+import { generateSecret } from "node-2fa";
 
 export default defineEventHandler(async (event) => {
-  const {
-    auth: { jwtTokenSecret, authCookieExpirySeconds },
-    public: { authCookieName },
-  } = useRuntimeConfig();
+  try {
+    const {
+      auth: { jwtTokenSecret, authCookieExpirySeconds },
+      public: {
+        auth: { authCookieName },
+      },
+    } = useRuntimeConfig();
 
-  const { db } = event.context;
+    const { db } = event.context;
 
-  const body = await zh.useValidatedBody(event, {
-    email: z.string().email(),
-    name: z.string().max(100),
-    password: z.string().min(8),
-    passwordConfirm: z.string().min(8),
-  });
-
-  if (body.password !== body.passwordConfirm) {
-    return createError({
-      status: 401,
-      message: "Passwords do not match",
+    const body = await zh.useValidatedBody(event, {
+      email: z.string().email(),
+      name: z.string().max(100),
+      password: z.string().min(8),
+      passwordConfirm: z.string().min(8),
     });
+
+    if (body.password !== body.passwordConfirm) {
+      throw new Error("Passwords do not match.");
+    }
+
+    const hashed = await hash(body.password);
+
+    const twoFactorSettings = generateSecret({
+      account: body.name,
+      name: useAppConfig().name ?? "Nuxtess App",
+    });
+
+    const user = await db.user.create({
+      data: {
+        name: body.name,
+        email: body.email,
+        password: hashed,
+        twoFactorSettings: {
+          create: twoFactorSettings,
+        },
+      },
+    });
+
+    const token = jwt.sign(user, jwtTokenSecret, {
+      expiresIn: authCookieExpirySeconds,
+    });
+
+    setCookie(event, authCookieName, token, {
+      httpOnly: true,
+      maxAge: authCookieExpirySeconds,
+    });
+
+    return {
+      data: exclude(user, ["password"]),
+      error: null,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      data: null,
+      error: (error as Error).message,
+    };
   }
-
-  const hashed = await hash(body.password);
-
-  const user = await db.user.create({
-    data: {
-      name: body.name,
-      email: body.email,
-      password: hashed,
-    },
-  });
-
-  const token = jwt.sign(user, jwtTokenSecret, {
-    expiresIn: authCookieExpirySeconds,
-  });
-
-  setCookie(event, authCookieName, token, {
-    httpOnly: true,
-    maxAge: authCookieExpirySeconds,
-  });
-
-  return exclude(user, ["password"]);
 });
