@@ -1,6 +1,8 @@
-import type { EventHandler } from "h3";
+import type { EventHandler, EventHandlerRequest } from "h3";
 
-export const defineAuthedEventHandler = <T>(callback: EventHandler<T>) => {
+export const defineAuthedEventHandler = <T extends EventHandlerRequest, R>(
+  handler: EventHandler<T, R>
+) => {
   return defineEventHandler((event) => {
     if (!event.context.user) {
       throw createError({
@@ -8,6 +10,6 @@ export const defineAuthedEventHandler = <T>(callback: EventHandler<T>) => {
         message: "UNAUTHORIZED",
       });
     }
-    return callback(event);
+    return handler(event);
   });
 };

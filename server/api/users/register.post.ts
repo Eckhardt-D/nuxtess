@@ -1,6 +1,5 @@
 import { z, zh } from "h3-zod";
 import { hash } from "argon2";
-// @ts-expect-error
 import jwt from "jsonwebtoken";
 import { generateSecret } from "node-2fa";
 
